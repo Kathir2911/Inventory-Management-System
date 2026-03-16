@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - IMS</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+        <div class="main-content">
+            <div th:replace="~{fragments/header :: header('Dashboard')}"></div>
+            <div class="content-area">
+
+                <!-- Stat Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon primary"><i class="fas fa-cube"></i></div>
+                        <div class="stat-info">
+                            <h3 th:text="${totalProducts}">0</h3>
+                            <p>Total Products</p>
+                        </div>
+                    </div>
+                    <div class="stat-card danger">
+                        <div class="stat-icon danger"><i class="fas fa-exclamation-triangle"></i></div>
+                        <div class="stat-info">
+                            <h3 th:text="${lowStockCount}">0</h3>
+                            <p>Low Stock Alerts</p>
+                        </div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="stat-icon success"><i class="fas fa-tags"></i></div>
+                        <div class="stat-info">
+                            <h3 th:text="${totalCategories}">0</h3>
+                            <p>Categories</p>
+                        </div>
+                    </div>
+                    <div class="stat-card info">
+                        <div class="stat-icon info"><i class="fas fa-truck"></i></div>
+                        <div class="stat-info">
+                            <h3 th:text="${totalSuppliers}">0</h3>
+                            <p>Suppliers</p>
+                        </div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-icon warning"><i class="fas fa-cart-shopping"></i></div>
+                        <div class="stat-info">
+                            <h3 th:text="${totalPurchaseOrders}">0</h3>
+                            <p>Purchase Orders</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon primary"><i class="fas fa-receipt"></i></div>
+                        <div class="stat-info">
+                            <h3 th:text="${totalSalesOrders}">0</h3>
+                            <p>Sales Orders</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Low Stock Products -->
+                <div class="card mb-2" th:if="${!lowStockProducts.isEmpty()}">
+                    <div class="card-header">
+                        <span><i class="fas fa-exclamation-triangle text-danger"></i> Low Stock Products</span>
+                        <a th:href="@{/products}" class="btn btn-sm btn-outline">View All</a>
+                    </div>
+                    <div class="card-body table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Product</th>
+                                    <th>Category</th>
+                                    <th>Quantity</th>
+                                    <th>Reorder Level</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="p : ${lowStockProducts}">
+                                    <td th:text="${p.id}"></td>
+                                    <td th:text="${p.name}"></td>
+                                    <td th:text="${p.category.name}"></td>
+                                    <td><span class="badge badge-danger" th:text="${p.quantity}"></span></td>
+                                    <td th:text="${p.reorderLevel}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Recent Stock Activity -->
+                <div class="card" th:if="${!recentLogs.isEmpty()}">
+                    <div class="card-header">
+                        <span><i class="fas fa-clipboard-list"></i> Recent Stock Activity</span>
+                        <a th:href="@{/stock-logs}" class="btn btn-sm btn-outline">View All</a>
+                    </div>
+                    <div class="card-body table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Product ID</th>
+                                    <th>Change Type</th>
+                                    <th>Quantity</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="log : ${recentLogs}">
+                                    <td th:text="${log.productId}"></td>
+                                    <td>
+                                        <span th:if="${log.changeType.name() == 'ADD'}"
+                                            class="badge badge-success">ADD</span>
+                                        <span th:if="${log.changeType.name() == 'REMOVE'}"
+                                            class="badge badge-danger">REMOVE</span>
+                                    </td>
+                                    <td th:text="${log.quantityChanged}"></td>
+                                    <td th:text="${#temporals.format(log.changeDate, 'yyyy-MM-dd HH:mm')}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/js/app.js}"></script>
+</body>
+
+</html>

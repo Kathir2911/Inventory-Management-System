@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 - Server Error</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="error-page">
+        <div class="error-content">
+            <i class="fas fa-server"></i>
+            <h1>500</h1>
+            <h2>Internal Server Error</h2>
+            <p th:text="${message ?: 'Something went wrong on our end. Please try again later.'}"></p>
+            <a th:href="@{/dashboard}" class="btn btn-primary"><i class="fas fa-home"></i> Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+
+</html>

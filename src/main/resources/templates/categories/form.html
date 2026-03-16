@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${category.id != null ? 'Edit Category' : 'Add Category'} + ' - IMS'">Category Form - IMS</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+        <div class="main-content">
+            <div th:replace="~{fragments/header :: header(${category.id != null ? 'Edit Category' : 'Add Category'})}">
+            </div>
+            <div class="content-area">
+                <div class="page-header">
+                    <h2><i class="fas fa-tags"></i> <span
+                            th:text="${category.id != null ? 'Edit Category' : 'New Category'}"></span></h2>
+                    <a th:href="@{/categories}" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Back</a>
+                </div>
+                <div class="card">
+                    <div class="card-body form-container">
+                        <form th:action="@{/categories/save}" th:object="${category}" method="post">
+                            <input type="hidden" th:field="*{id}">
+                            <div class="form-group">
+                                <label for="name">Category Name *</label>
+                                <input type="text" id="name" th:field="*{name}" class="form-control" required
+                                    placeholder="e.g. Electronics">
+                                <div th:if="${#fields.hasErrors('name')}" class="form-error" th:errors="*{name}"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea id="description" th:field="*{description}" class="form-control"
+                                    placeholder="Optional description"></textarea>
+                                <div th:if="${#fields.hasErrors('description')}" class="form-error"
+                                    th:errors="*{description}"></div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> <span
+                                        th:text="${category.id != null ? 'Update' : 'Save'}"></span></button>
+                                <a th:href="@{/categories}" class="btn btn-outline">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/js/app.js}"></script>
+</body>
+
+</html>

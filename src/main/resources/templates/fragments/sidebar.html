@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<!-- ===== SIDEBAR FRAGMENT ===== -->
+<nav th:fragment="sidebar" class="sidebar">
+    <div class="sidebar-header">
+        <i class="fas fa-boxes-stacked"></i>
+        <h2>IMS</h2>
+    </div>
+    <div class="sidebar-nav">
+        <span class="nav-section">Main</span>
+        <a th:href="@{/dashboard}" class="nav-link" href="/dashboard">
+            <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+        </a>
+
+        <span class="nav-section">Inventory</span>
+        <a th:href="@{/products}" class="nav-link" href="/products">
+            <i class="fas fa-cube"></i> <span>Products</span>
+        </a>
+        <a th:href="@{/categories}" class="nav-link" href="/categories">
+            <i class="fas fa-tags"></i> <span>Categories</span>
+        </a>
+        <a th:href="@{/suppliers}" class="nav-link" href="/suppliers">
+            <i class="fas fa-truck"></i> <span>Suppliers</span>
+        </a>
+        <a th:href="@{/stock-logs}" class="nav-link" href="/stock-logs">
+            <i class="fas fa-clipboard-list"></i> <span>Stock Logs</span>
+        </a>
+
+        <span class="nav-section">Orders</span>
+        <a th:href="@{/purchase-orders}" class="nav-link" href="/purchase-orders">
+            <i class="fas fa-cart-shopping"></i> <span>Purchase Orders</span>
+        </a>
+        <a th:href="@{/sales-orders}" class="nav-link" href="/sales-orders">
+            <i class="fas fa-receipt"></i> <span>Sales Orders</span>
+        </a>
+
+        <span class="nav-section">Reporting</span>
+        <a th:href="@{/reports}" class="nav-link" href="/reports">
+            <i class="fas fa-chart-bar"></i> <span>Reports</span>
+        </a>
+
+        <span sec:authorize="hasRole('ADMIN')" class="nav-section">Administration</span>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/users}" class="nav-link" href="/admin/users">
+            <i class="fas fa-users-cog"></i> <span>User Management</span>
+        </a>
+    </div>
+    <div class="sidebar-footer">
+        &copy; 2026 Kathir &mdash; IMS
+    </div>
+</nav>
+
+</body>
+</html>

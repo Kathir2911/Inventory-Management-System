@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Sales Order - IMS</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+        <div class="main-content">
+            <div th:replace="~{fragments/header :: header('New Sales Order')}"></div>
+            <div class="content-area">
+                
+                <div th:if="${errorMessage}" class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
+                    <button class="close-alert">&times;</button>
+                </div>
+
+                <div class="page-header">
+                    <h2><i class="fas fa-receipt"></i> Create Sales Order</h2>
+                    <a th:href="@{/sales-orders}" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Back</a>
+                </div>
+                <div class="card">
+                    <div class="card-body form-container">
+                        <form th:action="@{/sales-orders/save}" method="post">
+                            <div class="form-group">
+                                <label for="customerName">Customer Name *</label>
+                                <input type="text" id="customerName" name="customerName" class="form-control" required
+                                    placeholder="Customer full name">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="productId">Product *</label>
+                                    <select id="productId" name="productId" class="form-control" required>
+                                        <option value="">Select Product</option>
+                                        <option th:each="p : ${products}" th:value="${p.id}"
+                                            th:text="${p.name + ' (₹' + p.price + ', Stock: ' + p.quantity + ')'}"></option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="paymentMethod">Payment Method *</label>
+                                    <select id="paymentMethod" name="paymentMethod" class="form-control" required>
+                                        <option value="">Select Method</option>
+                                        <option value="CASH">Cash</option>
+                                        <option value="CARD">Card</option>
+                                        <option value="UPI">UPI</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="quantity">Quantity *</label>
+                                    <input type="number" id="quantity" name="quantity" min="1" class="form-control"
+                                        required placeholder="0">
+                                </div>
+                                <div class="form-group">
+                                    <label for="totalPrice">Total Price (₹) *</label>
+                                    <input type="number" id="totalPrice" name="totalPrice" step="0.01"
+                                        class="form-control" required placeholder="0.00" readonly
+                                        style="background-color: #f5f5f5;">
+                                    <span class="form-text">Calculated automatically</span>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Create
+                                    Sale</button>
+                                <a th:href="@{/sales-orders}" class="btn btn-outline">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/js/app.js}"></script>
+    <script>
+        // Auto-calculate total price for sales orders
+        const productSelect = document.getElementById('productId');
+        const quantityInput = document.getElementById('quantity');
+        const totalPriceInput = document.getElementById('totalPrice');
+
+        // Store product prices and stock
+        const productData = {};
+        
+        // Parse product data from options
+        document.querySelectorAll('#productId option').forEach(option => {
+            if (option.value) {
+                const text = option.textContent;
+                const priceMatch = text.match(/₹([\d.]+)/);
+                const stockMatch = text.match(/Stock: (\d+)/);
+                if (priceMatch && stockMatch) {
+                    productData[option.value] = {
+                        price: parseFloat(priceMatch[1]),
+                        stock: parseInt(stockMatch[1])
+                    };
+                }
+            }
+        });
+
+        function calculateTotal() {
+            const productId = productSelect.value;
+            const quantity = parseFloat(quantityInput.value) || 0;
+            
+            if (productId && productData[productId] && quantity > 0) {
+                // Check if quantity exceeds stock
+                if (quantity > productData[productId].stock) {
+                    quantityInput.setCustomValidity('Quantity exceeds available stock (' + productData[productId].stock + ')');
+                } else {
+                    quantityInput.setCustomValidity('');
+                }
+                
+                const total = productData[productId].price * quantity;
+                totalPriceInput.value = total.toFixed(2);
+            } else {
+                totalPriceInput.value = '';
+            }
+        }
+
+        // Add event listeners
+        productSelect.addEventListener('change', calculateTotal);
+        quantityInput.addEventListener('input', calculateTotal);
+    </script>
+</body>
+
+</html>

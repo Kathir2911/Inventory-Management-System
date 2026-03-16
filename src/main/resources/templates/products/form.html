@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${product.id != null ? 'Edit Product' : 'Add Product'} + ' - IMS'">Product Form - IMS</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+        <div class="main-content">
+            <div th:replace="~{fragments/header :: header(${product.id != null ? 'Edit Product' : 'Add Product'})}">
+            </div>
+            <div class="content-area">
+
+                <div class="page-header">
+                    <h2><i class="fas fa-cube"></i> <span
+                            th:text="${product.id != null ? 'Edit Product' : 'New Product'}"></span></h2>
+                    <a th:href="@{/products}" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Back to List</a>
+                </div>
+
+                <div class="card">
+                    <div class="card-body form-container">
+                        <form th:action="@{/products/save}" method="post">
+                            <input type="hidden" name="id" th:value="${product.id}">
+
+                            <div class="form-group">
+                                <label for="name">Product Name *</label>
+                                <input type="text" id="name" name="name" class="form-control" th:value="${product.name}"
+                                    required placeholder="Enter product name">
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="categoryId">Category *</label>
+                                    <select id="categoryId" name="categoryId" class="form-control" required>
+                                        <option value="">Select Category</option>
+                                        <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"
+                                            th:selected="${product.category != null and product.category.id == cat.id}">
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="price">Price (₹) *</label>
+                                    <input type="number" id="price" name="price" step="0.01" class="form-control"
+                                        th:value="${product.price}" required placeholder="0.00">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="quantity">Quantity</label>
+                                    <input type="number" id="quantity" name="quantity" min="0" class="form-control"
+                                        th:value="${product.quantity != null ? product.quantity : 0}" 
+                                        readonly style="background-color: #f5f5f5;"
+                                        placeholder="0">
+                                    <span class="form-text">
+                                        <i class="fas fa-info-circle"></i> 
+                                        Stock is managed through Purchase Orders (RECEIVED) and Sales Orders
+                                    </span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="reorderLevel">Reorder Level *</label>
+                                    <input type="number" id="reorderLevel" name="reorderLevel" min="0"
+                                        class="form-control" th:value="${product.reorderLevel}" required
+                                        placeholder="0">
+                                    <span class="form-text">Alert when stock falls below this level</span>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i>
+                                    <span th:text="${product.id != null ? 'Update Product' : 'Save Product'}"></span>
+                                </button>
+                                <a th:href="@{/products}" class="btn btn-outline">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/js/app.js}"></script>
+</body>
+
+</html>

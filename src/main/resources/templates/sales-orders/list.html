@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Orders - IMS</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+        <div class="main-content">
+            <div th:replace="~{fragments/header :: header('Sales Orders')}"></div>
+            <div class="content-area">
+                <div th:if="${successMessage}" class="alert alert-success">
+                    <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+                    <button class="close-alert">&times;</button>
+                </div>
+                <div class="page-header">
+                    <h2><i class="fas fa-receipt"></i> Sales Orders</h2>
+                    <a th:href="@{/sales-orders/new}" class="btn btn-primary"><i class="fas fa-plus"></i> New Sale</a>
+                </div>
+                <div class="card">
+                    <div class="card-body table-container">
+                        <table th:if="${!orders.isEmpty()}">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Customer</th>
+                                    <th>Product</th>
+                                    <th>Qty</th>
+                                    <th>Total</th>
+                                    <th>Payment</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="o : ${orders}">
+                                    <td th:text="${o.id}"></td>
+                                    <td th:text="${o.customerName}"></td>
+                                    <td th:text="${o.product.name}"></td>
+                                    <td th:text="${o.quantity}"></td>
+                                    <td th:text="'₹' + ${#numbers.formatDecimal(o.totalPrice, 1, 2)}"></td>
+                                    <td><span class="badge badge-info" th:text="${o.paymentMethod}"></span></td>
+                                    <td th:text="${#temporals.format(o.orderDate, 'yyyy-MM-dd HH:mm')}"></td>
+                                    <td class="actions">
+                                        <form th:action="@{/sales-orders/delete/{id}(id=${o.id})}" method="post"
+                                            style="display:inline">
+                                            <button type="submit" class="btn btn-sm btn-danger btn-delete"><i
+                                                    class="fas fa-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div th:if="${orders.isEmpty()}" class="empty-state">
+                            <i class="fas fa-receipt"></i>
+                            <p>No sales orders yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/js/app.js}"></script>
+</body>
+
+</html>
